@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: service
+          uri: lb://SERVICE1
+          predicates:
+            - Path=/test/,/api/service1
+          filters:
+            - RewritePath=/api/service1/?(?<segment>.*), /$\{segment}
+
+        - id: service2
+          uri: http://localhost:9094
+          predicates:
+            - Path=/api/service2
+          filters:
+            #            - PrefixPath=/add
+            - RewritePath=/api/service2/?(?<segment>.*), /$\{segment}
+#      discovery:
+#        locator:
+#          enabled: true
+server:
+  port: 9091
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9092/eureka/
+logging:
+  level:
+    org.springfamework.cloud.gateway: debug
